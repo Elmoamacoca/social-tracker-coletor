@@ -11,4 +11,4 @@ jobs:
           python-version: "3.12"
       - env:
           ALVO: nasa
-        run: python sonda_actions.py
+        run: python sonda_html.py
