@@ -8,8 +8,6 @@
 # de pico, e isso nao atrapalha: o rodizio e' pelo relogio e ninguem fica para tras.
 name: coleta
 on:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 # Uma execucao por vez. Sem isso, um atraso do Actions faz duas rodadas se atropelarem e
