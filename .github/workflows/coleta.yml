@@ -1,0 +1,36 @@
+# Gatilho do coletor no GitHub Actions.
+#
+# CADA EXECUCAO SAI POR UM ENDERECO DIFERENTE, e e' so' por isso que este arquivo existe.
+# O Worker da Cloudflare sai sempre pelo mesmo, e um endereco so' rende 18 leituras por
+# hora depois que o Instagram o penaliza. Aqui a maquina e' nova a cada vez.
+#
+# `*/10 * * * *` e' o ritmo pedido; o Actions costuma atrasar alguns minutos em horario
+# de pico, e isso nao atrapalha: o rodizio e' pelo relogio e ninguem fica para tras.
+name: coleta
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+# Uma execucao por vez. Sem isso, um atraso do Actions faz duas rodadas se atropelarem e
+# gastarem o dobro de requisicoes no mesmo minuto.
+concurrency:
+  group: coleta
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: coletar e guardar
+        env:
+          CF_CONTA: ${{ secrets.CF_CONTA }}
+          CF_TOKEN: ${{ secrets.CF_TOKEN }}
+          CF_KV: ${{ secrets.CF_KV }}
+          QUANTOS: "25"
+        run: python coletor_actions.py
